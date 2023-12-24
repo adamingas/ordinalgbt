@@ -1,0 +1,85 @@
+from ordinal_gbt.lgb import LGBMOrdinal
+import numpy as np
+from inspect import signature
+
+from ordinal_gbt.loss import (theta2alpha,
+                              gradient_ordinal_logistic_nll,
+                              hessian_ordinal_logistic_nll,
+                              probas_from_y_pred)
+
+# X,y = make_ordinal_classification(
+#     n_classes=5,n_samples=1000, n_features = 100, n_informative =10,noise=2)
+# model = LGBMOrdinal(n_estimators=1)
+# model.fit(X,y)
+# print(model._Booster.current_iteration())
+
+# model.fit(X,y,init_model= model)
+# print(model._Booster.current_iteration())
+# test_lgb.py
+def test_initialise_theta():
+    model = LGBMOrdinal()
+    model.n_classes = 5
+    expected_theta = np.array([0., 2., 4., 6.])
+    assert np.array_equal(model._initialise_theta(), expected_theta)
+
+def test_initialise_alpha():
+    model = LGBMOrdinal()
+    model.n_classes = 5
+    expected_theta = np.array([0., 2., 4., 6.])
+    expected_alpha = theta2alpha(expected_theta)
+    assert np.array_equal(model._initialise_alpha(), expected_alpha)
+
+def test_lgb_loss_factory():
+    model = LGBMOrdinal()
+    model.n_classes = 5
+    model.theta = np.array([0., 2., 4., 6.])
+    loss = model._lgb_loss_factory()
+    y_test = np.array([0, 1, 2, 3, 4])
+    y_pred = np.array([0, 1, 3, 5, 7])
+    expected_grad = gradient_ordinal_logistic_nll(y_test, y_pred, model.theta)
+    expected_hess = hessian_ordinal_logistic_nll(y_test, y_pred, model.theta)
+    
+    grad, hess =  loss(y_test, y_pred)
+    assert np.isclose(grad, expected_grad).all()
+    assert np.isclose(hess, expected_hess).all()
+
+def test_alpha_loss_factory():
+    model = LGBMOrdinal()
+    model.n_classes = 5
+    theta_1, theta_2 = np.array([0., 2., 4., 6.]), np.array([0., 1., 2., 3.])
+    alpha_1,alpha_2 = theta2alpha(theta_1), theta2alpha(theta_2)
+    y_true = np.array([0, 1, 2, 3, 4])
+    y_preds = np.array([0, 1, 2, 3, 4])
+    loss = model._alpha_loss_factory(y_true, y_preds)
+
+    assert loss(alpha_1) > loss(alpha_2)
+
+def test_optimise_alpha():
+    model = LGBMOrdinal()
+    model.n_classes = 5
+    model.theta = np.array([0., 2., 4., 6.])
+    y_true = np.array([0, 1, 2, 3, 4])
+    y_preds = np.array([0, 1, 2, 3, 4])
+    model._optimise_alpha(y_true, y_preds)
+    # assert that alpha_optimisation_report is not None and theta has changed
+    assert model._alpha_optimisation_report is not None
+    assert not np.array_equal(model.theta, np.array([0., 2., 4., 6.]))
+
+def test_initialise_objective():
+    model = LGBMOrdinal()
+    y = np.array([0, 1, 2, 3, 4])
+    model._initialise_objective(y)
+    # assert that n_classes and objective are not None
+    assert model.n_classes == 5
+    assert len(signature(model.objective).parameters) == 2
+
+def test_output_to_probability():
+    model = LGBMOrdinal()
+    model.n_classes = 5
+    model.theta = np.array([0., 2., 4., 6.])
+    output = np.array([0, 1, 2, 3, 4])
+    probas = model._output_to_probability(output)
+    # assert that probas is not None and has the correct shape
+    assert probas is not None
+    assert probas.shape == (5,5)
+    assert ( probas == probas_from_y_pred(output,model.theta) ).all()
