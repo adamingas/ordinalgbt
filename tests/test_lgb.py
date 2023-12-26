@@ -1,8 +1,8 @@
 from inspect import signature
 
 import numpy as np
-from ordinal_gbt.lgb import LGBMOrdinal
-from ordinal_gbt.loss import (
+from ordinalgbt.lgb import LGBMOrdinal
+from ordinalgbt.loss import (
     gradient_ordinal_logistic_nll,
     hessian_ordinal_logistic_nll,
     probas_from_y_pred,

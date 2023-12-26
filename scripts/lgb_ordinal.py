@@ -1,6 +1,6 @@
 from lightgbm import train, Dataset, LGBMClassifier
-from ordinal_gbt.lgb import LGBMOrdinal
-from ordinal_gbt.data import simplest_case, make_ordinal_classification
+from ordinalgbt.lgb import LGBMOrdinal
+from ordinalgbt.data import simplest_case, make_ordinal_classification
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 

@@ -1,6 +1,6 @@
 from setuptools import setup
 setup(
-    name='Ordinal loss',
+    name='ordinalgbt',
     version='0.01',
     description='',
     author='Adamos',

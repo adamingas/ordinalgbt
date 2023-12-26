@@ -3,7 +3,7 @@ import numpy as np
 from lightgbm import LGBMRegressor
 from scipy.optimize import minimize
 
-from ordinal_gbt.loss import (
+from ordinalgbt.loss import (
     alpha2theta,
     lgb_ordinal_loss,
     ordinal_logistic_nll,

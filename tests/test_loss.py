@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from ordinal_gbt.loss import (
+from ordinalgbt.loss import (
     alpha2theta,
     dec_clip_y_pred,
     grad_sigmoid,
