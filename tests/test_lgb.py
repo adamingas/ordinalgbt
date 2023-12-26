@@ -1,6 +1,7 @@
 from inspect import signature
 
 import numpy as np
+
 from ordinalgbt.lgb import LGBMOrdinal
 from ordinalgbt.loss import (
     gradient_ordinal_logistic_nll,
