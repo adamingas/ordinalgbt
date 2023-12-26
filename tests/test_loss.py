@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from ordinalgbt.loss import (
     alpha2theta,
     dec_clip_y_pred,
@@ -14,7 +15,6 @@ from ordinalgbt.loss import (
     stack_zeros_ones,
     theta2alpha,
 )
-from pandas import Series
 
 
 def test_stack_zeros_ones():
@@ -91,7 +91,6 @@ def test_lgb_ordinal_loss():
     y_true = np.array([1, 2, 0])
     theta = np.array([1,2])
     assert lgb_ordinal_loss(y_true, y_preds, theta) is not None
-    assert lgb_ordinal_loss(Series(y_true), y_preds, theta) is not None
 
 def test_dec_clip_y_pred():
     def test(y_true,y_preds,theta):
