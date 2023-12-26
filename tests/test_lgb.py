@@ -1,11 +1,13 @@
-from ordinal_gbt.lgb import LGBMOrdinal
-import numpy as np
 from inspect import signature
 
-from ordinal_gbt.loss import (theta2alpha,
-                              gradient_ordinal_logistic_nll,
-                              hessian_ordinal_logistic_nll,
-                              probas_from_y_pred)
+import numpy as np
+from ordinal_gbt.lgb import LGBMOrdinal
+from ordinal_gbt.loss import (
+    gradient_ordinal_logistic_nll,
+    hessian_ordinal_logistic_nll,
+    probas_from_y_pred,
+    theta2alpha,
+)
 
 # X,y = make_ordinal_classification(
 #     n_classes=5,n_samples=1000, n_features = 100, n_informative =10,noise=2)
@@ -38,7 +40,7 @@ def test_lgb_loss_factory():
     y_pred = np.array([0, 1, 3, 5, 7])
     expected_grad = gradient_ordinal_logistic_nll(y_test, y_pred, model.theta)
     expected_hess = hessian_ordinal_logistic_nll(y_test, y_pred, model.theta)
-    
+
     grad, hess =  loss(y_test, y_pred)
     assert np.isclose(grad, expected_grad).all()
     assert np.isclose(hess, expected_hess).all()
