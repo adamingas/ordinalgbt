@@ -1,17 +1,21 @@
-import pytest
 import numpy as np
+import pytest
+from ordinal_gbt.loss import (
+    alpha2theta,
+    dec_clip_y_pred,
+    grad_sigmoid,
+    gradient_ordinal_logistic_nll,
+    hess_sigmoid,
+    hessian_ordinal_logistic_nll,
+    lgb_ordinal_loss,
+    ordinal_logistic_nll,
+    probas_from_y_pred,
+    sigmoid,
+    stack_zeros_ones,
+    theta2alpha,
+)
 from pandas import Series
 
-from ordinal_gbt.loss import (dec_clip_y_pred, lgb_ordinal_loss, stack_zeros_ones,
-                              sigmoid,
-                              grad_sigmoid,
-                              hess_sigmoid,
-                              alpha2theta,
-                              theta2alpha,
-                              probas_from_y_pred,
-                              hessian_ordinal_logistic_nll,
-                              gradient_ordinal_logistic_nll,
-                              ordinal_logistic_nll)
 
 def test_stack_zeros_ones():
     a = np.array([[1,2], [3,4], [5,6]])
@@ -55,8 +59,10 @@ def test_ordinal_logistic_nll():
     y_preds = np.array([1, 4, 3])
     y_true = np.array([1, 2, 0])
     theta = np.array([0, 2])
-    expected_loss = -np.sum(np.log(sigmoid(np.array([1,1000,-3])) - sigmoid(np.array([-1,-2,-1000]))))
-    loss = ordinal_logistic_nll(y_true, y_preds, theta) 
+    expected_loss = -np.sum(np.log(
+        sigmoid(np.array([1,500,-3])) - sigmoid(np.array([-1,-2,-500]))
+        ))
+    loss = ordinal_logistic_nll(y_true, y_preds, theta)
     assert isinstance(loss, float)
     assert loss == pytest.approx(expected_loss)
 
@@ -66,8 +72,8 @@ def test_gradient_ordinal_logistic_nll():
     theta = np.array([1,2])
 
     np.testing.assert_almost_equal(
-        gradient_ordinal_logistic_nll(y_true, y_preds, theta), 
-                                   np.array([0, 0, 1]), 
+        gradient_ordinal_logistic_nll(y_true, y_preds, theta),
+                                   np.array([0, 0, 1]),
                                    decimal=3)
 
 def test_hessian_ordinal_logistic_nll():
@@ -76,8 +82,8 @@ def test_hessian_ordinal_logistic_nll():
     theta = np.array([1,2])
 
 
-    np.testing.assert_almost_equal(hessian_ordinal_logistic_nll(y_true, y_preds, theta), 
-                                   np.array([0.47, 0, 0]), 
+    np.testing.assert_almost_equal(hessian_ordinal_logistic_nll(y_true, y_preds, theta),
+                                   np.array([0.47, 0, 0]),
                                    decimal=5)
 
 def test_lgb_ordinal_loss():
@@ -94,4 +100,5 @@ def test_dec_clip_y_pred():
     y_preds = np.array([1.5, 710, -38])
     y_true = np.array([1, 710, 0])
     theta = np.array([1,2])
-    assert float(fun(y_true = y_true,y_preds = y_preds, theta = theta).max()) == pytest.approx(700 + 1)
+    assert float(fun(y_true = y_true,y_preds = y_preds, theta = theta).max()) ==\
+        pytest.approx(700 + 1)
