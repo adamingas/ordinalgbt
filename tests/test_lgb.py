@@ -9,15 +9,7 @@ from ordinal_gbt.loss import (
     theta2alpha,
 )
 
-# X,y = make_ordinal_classification(
-#     n_classes=5,n_samples=1000, n_features = 100, n_informative =10,noise=2)
-# model = LGBMOrdinal(n_estimators=1)
-# model.fit(X,y)
-# print(model._Booster.current_iteration())
 
-# model.fit(X,y,init_model= model)
-# print(model._Booster.current_iteration())
-# test_lgb.py
 def test_initialise_theta():
     model = LGBMOrdinal()
     model.n_classes = 5
