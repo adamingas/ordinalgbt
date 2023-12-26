@@ -1,3 +1,4 @@
 scipy
 numpy
 lightgbm
+scikit-learn
