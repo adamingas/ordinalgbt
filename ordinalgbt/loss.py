@@ -13,21 +13,32 @@ def dec_clip_y_pred(fun):
 
 
 def stack_zeros_ones(a: np.ndarray, only_zeros=False) -> np.ndarray:
-    """
+    """Stacks zeroes and ones on the left and rights part of the array
     Stacks horizontally zeros and ones on the left and right hand side of the array
     respectively. If only_zeros is true then it only stacks zeros. This is for the
     gradient which is zero at both ends of the sigmoid.
-    e.g.
+    e.g.::
 
-        ```python
         a = [[1,2],
-             [3,4],
-             [5,6]]
+            [3,4],
+            [5,6]]
         returns
             [[0,1,2,1],
-             [0,3,4,1],
-             [0,5,6,1]]
-        ```
+            [0,3,4,1],
+            [0,5,6,1]]
+
+
+    Parameters
+    ----------
+    a: np.ndarray
+        A 2D array to pad with zeroes and ones
+    only_zeros: bool, default False
+        If true, then it pads with only zeroes
+
+    Returns
+    -------
+    np.ndarray
+
     """
     if only_zeros:
         return np.hstack(
@@ -43,24 +54,54 @@ def stack_zeros_ones(a: np.ndarray, only_zeros=False) -> np.ndarray:
     )
 
 
-def sigmoid(z):  # sigma
-    """
-    Sigmoid
+def sigmoid(z)->np.ndarray:
+    """Sigmoid
+    Sigmoid implementation in numpy
+
+    Parameters
+    ----------
+    z : np.ndarray
+
+    Returns
+    -------
+    np.ndarray
+        Sigmoid
     """
     return 1 / (1 + np.exp(-z))
 
 
-def grad_sigmoid(z):  # sigma'(z)
-    """
+def grad_sigmoid(z) -> np.ndarray:
+    """Gradient
     Gradient of the sigmoid
+
+    Parameters
+    ----------
+    z : np.ndarray
+
+    Returns
+    -------
+    np.ndarray
+        Gradient of Sigmoid
+
     """
     phat = sigmoid(z)
     return phat * (1 - phat)
 
 
-def hess_sigmoid(z):
-    """
+def hess_sigmoid(z) -> np.ndarray:
+    """Hessian
     Hessian of the sigmoid
+    Sigmoid implementation in numpy
+
+    Parameters
+    ----------
+    z : np.ndarray
+
+    Returns
+    -------
+    np.ndarray
+        Hessian of sigmoid
+
     """
     grad = grad_sigmoid(z)
     sig = sigmoid(z)
@@ -117,16 +158,24 @@ def probas_from_y_pred(y_preds, theta):
 
 
 def ordinal_logistic_nll(y_true: np.ndarray, y_preds: np.ndarray, theta: np.ndarray):
-    """
-    Args:
-        y_true: np.array 1-D array with correct labels, starts from 0 and goes up
-            to the number of unique classes minus one (so unique values are 0,1,2
-            when dealing with three classes)
-        y_preds: np.array 1-D array with predictions in latent space
-        theta: thresholds, 1-D array, size is the number of classes minus one.
+    """Ordinal Negative log lilelihood
 
-    Returns:
+    Parameters
+    ----------
+    y_true : np.ndarray
+        1-D array with correct labels, starts from 0 and goes up to the number
+        of unique classes minus one (so unique values are 0,1,2 when dealing
+        with three classes)
+    y_preds : np.ndarray
+        1-D array with predictions in latent space
+    theta : np.ndarray
+        thresholds, 1-D array, size is the number of classes minus one.
+
+    Returns
+    -------
+    np.ndarray
         logistic ordinal negative log likelihood
+
     """
     probas = probas_from_y_pred(y_preds, theta)
     # probabilities associated with the correct label
@@ -139,14 +188,25 @@ def ordinal_logistic_nll(y_true: np.ndarray, y_preds: np.ndarray, theta: np.ndar
 def gradient_ordinal_logistic_nll(
     y_true: np.ndarray, y_preds: np.ndarray, theta: np.ndarray
 ) -> np.ndarray:
-    """
+    """Gradient of ordinal nll
     Gradient of the ordinal logistic regression with respect to the predictions
-    Args:
-        y_true: np.array 1-D array with correct labels, starts from 0 and goes up
-            to the number of unique classes minus one (so unique values are 0,1,2
-            when dealing with three classes)
-        y_preds: np.array 1-D array with predictions in latent space
-        theta: thresholds, 1-D array, size is the number of classes minus one.
+
+    Parameters
+    ----------
+    y_true : np.ndarray
+        1-D array with correct labels, starts from 0 and goes up to the number
+        of unique classes minus one (so unique values are 0,1,2 when dealing
+        with three classes)
+    y_preds : np.ndarray
+        1-D array with predictions in latent space
+    theta : np.ndarray
+        thresholds, 1-D array, size is the number of classes minus one.
+
+    Returns
+    -------
+    np.ndarray
+        Gradient of logistic ordinal negative log likelihood
+
     """
     y_preds = np.clip(y_preds, -20, a_max=700 + min(theta))
     probas = probas_from_y_pred(y_preds, theta)
@@ -161,14 +221,25 @@ def gradient_ordinal_logistic_nll(
 def hessian_ordinal_logistic_nll(
     y_true: np.ndarray, y_preds: np.ndarray, theta: np.ndarray
 ) -> np.ndarray:
-    """
+    """Hessian of ordinal nll
     Hessian of the ordinal logistic regression with respect to the predictions
-    Args:
-        y_true: np.array 1-D array with correct labels, starts from 0 and goes up
-            to the number of unique classes minus one (so unique values are 0,1,2
-            when dealing with three classes)
-        y_preds: np.array 1-D array with predictions in latent space
-        theta: thresholds, 1-D array, size is the number of classes minus one.
+
+    Parameters
+    ----------
+    y_true : np.ndarray
+        1-D array with correct labels, starts from 0 and goes up to the number
+        of unique classes minus one (so unique values are 0,1,2 when dealing
+        with three classes)
+    y_preds : np.ndarray
+        1-D array with predictions in latent space
+    theta : np.ndarray
+        thresholds, 1-D array, size is the number of classes minus one.
+
+    Returns
+    -------
+    np.ndarray
+        Hessian of logistic ordinal negative log likelihood
+
     """
     y_preds = np.clip(y_preds, -20, a_max=700 + min(theta))
     probas = probas_from_y_pred(y_preds, theta)
@@ -190,6 +261,26 @@ def hessian_ordinal_logistic_nll(
 def lgb_ordinal_loss(
     y_true: np.ndarray, y_pred: np.ndarray, theta: np.ndarray
 ):
+    """Ordinal loss for lightgbm use
+    The ordinal loss used in the lightgbm framework. Returns the
+    gradient and hessian of the loss.
+
+    Parameters
+    ----------
+    y_true : np.ndarray
+        1-D array with correct labels, starts from 0 and goes up to the number
+        of unique classes minus one (so unique values are 0,1,2 when dealing
+        with three classes)
+    y_preds : np.ndarray
+        1-D array with predictions in latent space
+    theta : np.ndarray
+        thresholds, 1-D array, size is the number of classes minus one.
+
+    Returns
+    -------
+    (np.ndarray, np.ndarray)
+        Gradient and Hessian of logistic ordinal negative log likelihood
+    """
     grad = gradient_ordinal_logistic_nll(y_true, y_pred, theta)
     hess = hessian_ordinal_logistic_nll(y_true, y_pred, theta)
     return (grad, hess)
