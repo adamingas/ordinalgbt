@@ -23,7 +23,7 @@ extensions = [
 autoapi_dirs = ["../ordinalgbt"]  # location to parse for API reference
 html_theme = "sphinx_rtd_theme"
 exclude_patterns = []
-
+nb_execution_mode = "off"
 
 
 # -- Options for HTML output -------------------------------------------------

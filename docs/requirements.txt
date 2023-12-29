@@ -2,3 +2,5 @@ myst-nb==1.0.0rc0
 sphinx
 sphinx-autoapi
 sphinx-rtd-theme
+shap
+scikit-learn
