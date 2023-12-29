@@ -9,3 +9,6 @@ unfixable = []
 
 # restrict Line length to 99
 line-length = 88
+[build-system]
+requires = ["setuptools >= 61"]
+build-backend = "setuptools.build_meta"
