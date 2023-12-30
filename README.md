@@ -1,5 +1,6 @@
 [![Python application](https://github.com/adamingas/ordinalgbt/actions/workflows/python-app.yml/badge.svg)](https://github.com/adamingas/ordinalgbt/actions/workflows/python-app.yml)
 # OrdinalGBT
+Ordinal gradient boosted trees
 ## Introduction
 OrdinalGBT is a Python package that implements an ordinal regression loss function using the lightGBM framework. Ordinal regression is a type of regression analysis used for predicting an ordinal variable, i.e. a variable that can be sorted in some order. LightGBM is a gradient boosting framework that uses tree-based learning algorithms and is designed to be distributed and efficient.
 
