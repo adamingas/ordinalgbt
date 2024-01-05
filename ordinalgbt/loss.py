@@ -151,9 +151,9 @@ def probas_from_y_pred(y_preds, theta):
     c_probas = stack_zeros_ones(s_array)
 
     probas = c_probas[:, 1 : len(theta) + 2] - c_probas[:, 0 : len(theta) + 1]
-    probas = np.clip(
-        probas, a_min=np.finfo(float).eps, a_max=1 - 3 * np.finfo(float).eps
-    )
+    # probas = np.clip(
+    #     probas, a_min=np.finfo(float).eps, a_max=1 - 3 * np.finfo(float).eps
+    # )
     return probas
 
 
