@@ -99,6 +99,17 @@ def test_hessian_ordinal_logistic_nll():
                                    np.array([0.47, 0, 0]),
                                    decimal=5)
 
+def test_hessian_ordinal_logistic_nll_monotonic():
+    """
+    Testing at extreeme values of y_pred where the resolution
+    of float point arithmetic might fail
+    """
+    y_preds = np.linspace(0,150,100)
+    y_true = np.array([5]*100)
+    theta = np.arange(0,18,2)
+
+    hessian = hessian_ordinal_logistic_nll(y_true, y_preds, theta)
+
 def test_lgb_ordinal_loss():
     y_preds = np.array([1.5, 15, -38])
     y_true = np.array([1, 2, 0])
