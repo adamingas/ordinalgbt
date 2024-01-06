@@ -6,7 +6,7 @@ import numpy as np
 def dec_clip_y_pred(fun):
     @wraps(fun)
     def wrapped(*, y_true, y_preds, theta):
-        y_preds = np.clip(y_preds, -20, a_max=700 + min(theta))
+        y_preds = np.clip(y_preds, max(theta)-36, a_max=700 + min(theta))
         return fun(y_true=y_true, y_preds=y_preds, theta=theta)
 
     return wrapped
@@ -151,12 +151,12 @@ def probas_from_y_pred(y_preds, theta):
     c_probas = stack_zeros_ones(s_array)
 
     probas = c_probas[:, 1 : len(theta) + 2] - c_probas[:, 0 : len(theta) + 1]
-    # probas = np.clip(
-    #     probas, a_min=np.finfo(float).eps, a_max=1 - 3 * np.finfo(float).eps
-    # )
+    probas = np.clip(
+        probas, a_min=np.finfo(float).eps, a_max=1 - len(theta) * np.finfo(float).eps
+    )
     return probas
 
-
+@dec_clip_y_pred
 def ordinal_logistic_nll(y_true: np.ndarray, y_preds: np.ndarray, theta: np.ndarray):
     """Ordinal Negative log lilelihood
 
@@ -180,6 +180,9 @@ def ordinal_logistic_nll(y_true: np.ndarray, y_preds: np.ndarray, theta: np.ndar
     probas = probas_from_y_pred(y_preds, theta)
     # probabilities associated with the correct label
     label_probas = probas[np.arange(0, len(y_true)), y_true]
+    label_probas = np.clip(
+        label_probas, a_min=np.finfo(float).eps, a_max=1 - len(theta) * np.finfo(float).eps
+    )
     # loss
     return -np.sum(np.log(label_probas))
 
