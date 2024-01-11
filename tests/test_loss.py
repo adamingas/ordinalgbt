@@ -107,8 +107,18 @@ def test_hessian_ordinal_logistic_nll_monotonic():
     y_preds = np.linspace(0,150,100)
     y_true = np.array([5]*100)
     theta = np.arange(0,18,2)
-
+    expected_max_mask = np.logical_and(y_preds<theta[5],y_preds>theta[4])
     hessian = hessian_ordinal_logistic_nll(y_true, y_preds, theta)
+    np.testing.assert_almost_equal(hessian[expected_max_mask], hessian.max())
+
+    expected_max_indx = np.where(expected_max_mask)[0]
+    ascending = hessian[:expected_max_indx[0]]
+    assert ((ascending[1:] - ascending[:-1]) >=0).all()
+
+    descending = hessian[expected_max_indx[0]:]
+    assert ((descending[1:] - descending[:-1]) <=0).all()
+
+
 
 def test_lgb_ordinal_loss():
     y_preds = np.array([1.5, 15, -38])
