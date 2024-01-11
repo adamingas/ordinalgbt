@@ -181,7 +181,9 @@ def ordinal_logistic_nll(y_true: np.ndarray, y_preds: np.ndarray, theta: np.ndar
     # probabilities associated with the correct label
     label_probas = probas[np.arange(0, len(y_true)), y_true]
     label_probas = np.clip(
-        label_probas, a_min=np.finfo(float).eps, a_max=1 - len(theta) * np.finfo(float).eps
+        label_probas,
+        a_min=np.finfo(float).eps,
+        a_max=1 - len(theta) * np.finfo(float).eps
     )
     # loss
     return -np.sum(np.log(label_probas))
