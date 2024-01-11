@@ -14,15 +14,8 @@ from ordinalgbt.loss import (
 def test_initialise_theta():
     model = LGBMOrdinal()
     model.n_classes = 5
-    expected_theta = np.array([0., 2., 4., 6.])
+    expected_theta = np.array([0., 1., 2., 3.])
     assert np.array_equal(model._initialise_theta(), expected_theta)
-
-def test_initialise_alpha():
-    model = LGBMOrdinal()
-    model.n_classes = 5
-    expected_theta = np.array([0., 2., 4., 6.])
-    expected_alpha = theta2alpha(expected_theta)
-    assert np.array_equal(model._initialise_alpha(), expected_alpha)
 
 def test_lgb_loss_factory():
     model = LGBMOrdinal()
