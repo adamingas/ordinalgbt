@@ -151,9 +151,9 @@ def probas_from_y_pred(y_preds, theta):
     c_probas = stack_zeros_ones(s_array)
 
     probas = c_probas[:, 1 : len(theta) + 2] - c_probas[:, 0 : len(theta) + 1]
-    probas = np.clip(
-        probas, a_min=np.finfo(float).eps, a_max=1 - len(theta) * np.finfo(float).eps
-    )
+    # probas = np.clip(
+    #     probas, a_min=np.finfo(float).eps, a_max=1 - len(theta) * np.finfo(float).eps
+    # )
     return probas
 
 @dec_clip_y_pred
@@ -258,6 +258,7 @@ def hessian_ordinal_logistic_nll(
     hessian = -(h_probas / probas - np.power(g_probas / probas, 2))[
         np.arange(0, len(y_true)), y_true
     ]
+    # hessian[np.abs(hessian) <=np.finfo(float).eps] = -np.finfo(float).eps
     return hessian
 
 
