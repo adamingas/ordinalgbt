@@ -62,7 +62,7 @@ def test_ordinal_logistic_nll():
     expected_loss = -np.sum(np.log(
         sigmoid(np.array([1,500,-3])) - sigmoid(np.array([-1,-2,-500]))
         ))
-    loss = ordinal_logistic_nll(y_true, y_preds, theta)
+    loss = ordinal_logistic_nll(y_true= y_true, y_preds= y_preds, theta= theta)
     assert isinstance(loss, float)
     assert loss == pytest.approx(expected_loss)
 
