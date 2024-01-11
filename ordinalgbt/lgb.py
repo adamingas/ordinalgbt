@@ -64,10 +64,7 @@ class LGBMOrdinal(LGBMRegressor):
         # self.threshold_interval = threshold_interval
 
     def _initialise_theta(self):
-        return np.linspace(0, (self.n_classes - 2) * 2, self.n_classes - 1)
-
-    def _initialise_alpha(self):
-        return theta2alpha(np.linspace(0, (self.n_classes - 2) * 2, self.n_classes - 1))
+        return np.linspace(0, (self.n_classes - 2) * 1, self.n_classes - 1)
 
     def _lgb_loss_factory(self):
         self.theta = self._initialise_theta()
@@ -96,7 +93,8 @@ class LGBMOrdinal(LGBMRegressor):
         """
         loss = self._alpha_loss_factory(y_true, y_preds)
         alpha = theta2alpha(self.theta)
-        self._alpha_optimisation_report = minimize(loss, alpha)
+        bounds = [(None,3.58)]*len(alpha)
+        self._alpha_optimisation_report = minimize(loss, alpha, bounds=bounds)
         alpha = self._alpha_optimisation_report.x
         self.theta = alpha2theta(alpha)
 
