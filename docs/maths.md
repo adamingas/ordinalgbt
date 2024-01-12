@@ -35,18 +35,18 @@ $$
 A function that satisfies all these conditions is the sigmoid function, hereafter denoted as $\sigma$.
 ## Deriving the loss function
 
-Given n samples, the likelihood of our set of predictions $y_i$ is:
+Given n samples, the likelihood of our set of predictions $\bf y$ is:
 $$
-L(Y;\Theta) = \prod_{i =0}^n I(z_i=k)P(z_i = k; y_i,\Theta)
+L({\bf y} ;\Theta) = \prod_{i =0}^n I(z_i=k)P(z_i = k; y_i,\Theta)
 $$
 
 As is usual in machine learning we use the negative log likelihhod as our loss:
 
 $$
 \begin{align}
-l(Y;\Theta) &= -\log L(Y,\theta)\\
+l({\bf y};\Theta) &= -\log L({\bf y},\theta)\\
 &= -\sum_{i=0}^n I(z_i=k)\log(P(z_i = k; y_i,\Theta)) \\
-&= -\sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y) - \sigma(\theta_{k-1} - y)\right)
+&= -\sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y_i) - \sigma(\theta_{k-1} - y_i)\right)
 \end{align}
 $$
 ## Deriving the gradient and hessian
@@ -54,6 +54,87 @@ $$
 To use a custom loss function with gradient boosting tree frameworks (i.e. lightgbm), we have to first derive the gradient and hessian of the loss with respect to **the raw predictions**, in our case the latent variable $y_i$.
 
 
+We denote the first and second order derivative of the sigmoid as $\sigma'$ and $\sigma''$ respectively.
+
+The gradient is denoted as :TODO:
+
+$$
+\begin{align*}
+\mathcal{G}&=\frac{\partial l({\bf y};\Theta)}{\partial {\bf y}} \\
+&= -\frac{\partial }{\partial {\bf y}} \sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y_i) - \sigma(\theta_{k-1} - y_i)\right)  \\
+&=
+\begin{pmatrix}
+    -\frac{\partial }{\partial y_1} \sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y_i) - \sigma(\theta_{k-1} - y_i)\right)  \\
+    ... \\
+    -\frac{\partial }{\partial y_n} \sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y_i) - \sigma(\theta_{k-1} - y_i)\right)  \\
+\end{pmatrix} \\
+&=
+\begin{pmatrix}
+   I(z_1 = k) \left( \frac{\sigma'(\theta_k-y_1) - \sigma'(\theta_{k-1}-y_1)}{\sigma(\theta_k-y_1) - \sigma(\theta_{k-1}-y_1)} \right)  \\ 
+   ... \\
+
+   I(z_n = k) \left( \frac{\sigma'(\theta_k-y_n) - \sigma'(\theta_{k-1}-y_n)}{\sigma(\theta_k-y_n) - \sigma(\theta_{k-1}-y_n)} \right)  \\ 
+\end{pmatrix}
+\end{align*}
+$$
+
+The summmation is gone when calculating the derivative for variable $y_i$ as every element of the summation depends only on one latent variable:
+
+$$
+\begin{align*}
+\frac{\partial f(y_1)+f(y_2)+f(y_3)}{\partial {\bf y}} &=
+    \begin{pmatrix}
+        \frac{\partial f(y_1)+f(y_2)+f(y_3)}{\partial y_1} \\
+        \frac{\partial f(y_1)+f(y_2)+f(y_3)}{\partial y_2} \\
+        \frac{\partial f(y_1)+f(y_2)+f(y_3)}{\partial y_3} \\
+    \end{pmatrix} \\
+&=
+
+    \begin{pmatrix}
+        \frac{\partial f(y_1)}{\partial y_1} \\
+        \frac{\partial f(y_2)}{\partial y_2} \\
+        \frac{\partial f(y_3)}{\partial y_3} \\
+    \end{pmatrix}
+\end{align*}
+$$
+
+
+The hessian is the partial derivative of the gradient with respect to the latent variable vector. This means that for each element of the gradient vector we calculate the partial derivative w.r.t. the whole latent variable vector. Thus the hessian is a matrix of partial derivatives:
+
+$$
+\begin{pmatrix}
+\frac{\partial}{\partial y_1 y_1} & ... &
+\frac{\partial}{\partial y_1 y_n} \\
+.&&.\\.&&.\\.&&.\\
+\frac{\partial}{\partial y_n y_1} & ... &
+\frac{\partial}{\partial y_n y_n}
+\end{pmatrix}l({\bf y};\Theta)
+$$
+
+However, since we know that the partial derivative of the loss w.r.t. the latent variable $y_i$ depends only on the $i^{th}$ element of the $y$ vector, the off diagonal elements of the hessian matrix are reduced to zero:
+$$
+\frac{\partial}{\partial y_i y_j} l({\bf y};\Theta) = 0 \text{ if } i \neq j
+$$
+
+The hessian is then reduced to a vetor:
+
+$$
+\begin{align*}
+\mathcal{H} &=  
+    \begin{pmatrix}
+        \frac{\partial}{\partial y_1 y_1}  \\
+        ... \\
+        \frac{\partial}{\partial y_n y_n}
+    \end{pmatrix}l({\bf y};\Theta) \\
+    &=
+    \begin{pmatrix}
+        \frac{\partial}{\partial y_1 y_1}(z_1 = k) \left( \frac{\sigma'(\theta_k-y_1) - \sigma'(\theta_{k-1}-y_1)}{\sigma(\theta_k-y_1) - \sigma(\theta_{k-1}-y_1)} \right)  \\ 
+        ... \\.. \\
+        \frac{\partial}{\partial y_n y_n}
+        (z_n = k) \left( \frac{\sigma'(\theta_k-y_n) - \sigma'(\theta_{k-1}-y_n)}{\sigma(\theta_k-y_n) - \sigma(\theta_{k-1}-y_n)} \right)  \\ 
+    \end{pmatrix}
+\end{align*}
+$$
 
 
 $$
