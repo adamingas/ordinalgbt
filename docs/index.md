@@ -7,5 +7,6 @@
 
 comparison_with_classifiers.ipynb
 shap.ipynb
+maths.md
 autoapi/index
 ```

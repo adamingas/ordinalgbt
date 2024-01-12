@@ -1,5 +1,6 @@
-# Maths
-## Immediate Thresholds
+# Loss
+## Maths
+### Immediate Thresholds
 
 As is usual in ordinal regression model formulations, we build a regressor that learns a latent variable $y$, and then use a set of thresholds $\Theta$ to produce the probability estimates for each label. The set of thresholds is ordered, does not include infinities, and has as many members as the numbers of labels minus one.
 
@@ -7,7 +8,7 @@ We want to come up with a a way to map the latent variable $y$ to the probabilit
 
 In a three ordered labeled problem, we only need two thresholds, $\theta_1$ and $\theta_2$, to define the three regions which are associated to each label $(-\infty,\theta_1], (\theta_1, \theta_2], (\theta_2, \infty)$.
 
-## Deriving probabilities
+### Deriving probabilities
 
 A property we want our mapping from latent variable to probability to have is for the cummulative probability of label $z$ being at most label $k$ to increase as the label increases. This means that $P(z\leq k;y,\Theta)$ should increase as $k$ increases (i.e. as we consider more labels).
 
@@ -33,7 +34,7 @@ $$
 
 
 A function that satisfies all these conditions is the sigmoid function, hereafter denoted as $\sigma$.
-## Deriving the loss function
+### Deriving the loss function
 
 Given n samples, the likelihood of our set of predictions $\bf y$ is:
 $$
@@ -43,13 +44,13 @@ $$
 As is usual in machine learning we use the negative log likelihhod as our loss:
 
 $$
-\begin{align}
+\begin{align*}
 l({\bf y};\Theta) &= -\log L({\bf y},\theta)\\
 &= -\sum_{i=0}^n I(z_i=k)\log(P(z_i = k; y_i,\Theta)) \\
 &= -\sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y_i) - \sigma(\theta_{k-1} - y_i)\right)
-\end{align}
+\end{align*}
 $$
-## Deriving the gradient and hessian
+### Deriving the gradient and hessian
 
 To use a custom loss function with gradient boosting tree frameworks (i.e. lightgbm), we have to first derive the gradient and hessian of the loss with respect to **the raw predictions**, in our case the latent variable $y_i$.
 
@@ -62,19 +63,19 @@ $$
 \begin{align*}
 \mathcal{G}&=\frac{\partial l({\bf y};\Theta)}{\partial {\bf y}} \\
 &= -\frac{\partial }{\partial {\bf y}} \sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y_i) - \sigma(\theta_{k-1} - y_i)\right)  \\
-&=
-\begin{pmatrix}
-    -\frac{\partial }{\partial y_1} \sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y_i) - \sigma(\theta_{k-1} - y_i)\right)  \\
+    &=
+    \begin{pmatrix}
+        -\frac{\partial }{\partial y_1} \sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y_i) - \sigma(\theta_{k-1} - y_i)\right)  \\
+        ... \\
+        -\frac{\partial }{\partial y_n} \sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y_i) - \sigma(\theta_{k-1} - y_i)\right)  \\
+    \end{pmatrix} \\
+    &=
+    \begin{pmatrix}
+    I(z_1 = k) \left( \frac{\sigma'(\theta_k-y_1) - \sigma'(\theta_{k-1}-y_1)}{\sigma(\theta_k-y_1) - \sigma(\theta_{k-1}-y_1)} \right)  \\ 
     ... \\
-    -\frac{\partial }{\partial y_n} \sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y_i) - \sigma(\theta_{k-1} - y_i)\right)  \\
-\end{pmatrix} \\
-&=
-\begin{pmatrix}
-   I(z_1 = k) \left( \frac{\sigma'(\theta_k-y_1) - \sigma'(\theta_{k-1}-y_1)}{\sigma(\theta_k-y_1) - \sigma(\theta_{k-1}-y_1)} \right)  \\ 
-   ... \\
 
-   I(z_n = k) \left( \frac{\sigma'(\theta_k-y_n) - \sigma'(\theta_{k-1}-y_n)}{\sigma(\theta_k-y_n) - \sigma(\theta_{k-1}-y_n)} \right)  \\ 
-\end{pmatrix}
+    I(z_n = k) \left( \frac{\sigma'(\theta_k-y_n) - \sigma'(\theta_{k-1}-y_n)}{\sigma(\theta_k-y_n) - \sigma(\theta_{k-1}-y_n)} \right)  \\ 
+    \end{pmatrix}
 \end{align*}
 $$
 
@@ -128,14 +129,40 @@ $$
     \end{pmatrix}l({\bf y};\Theta) \\
     &=
     \begin{pmatrix}
-        \frac{\partial}{\partial y_1 y_1}(z_1 = k) \left( \frac{\sigma'(\theta_k-y_1) - \sigma'(\theta_{k-1}-y_1)}{\sigma(\theta_k-y_1) - \sigma(\theta_{k-1}-y_1)} \right)  \\ 
-        ... \\.. \\
-        \frac{\partial}{\partial y_n y_n}
-        (z_n = k) \left( \frac{\sigma'(\theta_k-y_n) - \sigma'(\theta_{k-1}-y_n)}{\sigma(\theta_k-y_n) - \sigma(\theta_{k-1}-y_n)} \right)  \\ 
+        \frac{\partial}{\partial y_1 }I(z_1 = k) \left( \frac{\sigma'(\theta_k-y_1) - \sigma'(\theta_{k-1}-y_1)}{\sigma(\theta_k-y_1) - \sigma(\theta_{k-1}-y_1)} \right)  \\ 
+        ... \\
+        \frac{\partial}{\partial y_n }
+        I(z_n = k) \left( \frac{\sigma'(\theta_k-y_n) - \sigma'(\theta_{k-1}-y_n)}{\sigma(\theta_k-y_n) - \sigma(\theta_{k-1}-y_n)} \right)  
+    \end{pmatrix}\\
+    &=
+    \begin{pmatrix}
+        -I(z_i = k) \left( \frac{\sigma''(\theta_k-y_1) - \sigma''(\theta_{k-1}-y_1)}{\sigma(\theta_k-y_1) - \sigma(\theta_{k-1}-y_1)} \right)  +
+          I(z_n = k)\left( \frac{\sigma'(\theta_k-y_1) - \sigma'(\theta_{k-1}-y_1)}{\sigma(\theta_k-y_1) - \sigma(\theta_{k-1}-y_1)} \right)^2 \\ 
+        ... \\
+        -I(z_n = k) \left( \frac{\sigma''(\theta_k-y_n) - \sigma''(\theta_{k-1}-y_n)}{\sigma(\theta_k-y_n) - \sigma(\theta_{k-1}-y_n)} \right)  +
+          I(z_n = k)\left( \frac{\sigma'(\theta_k-y_n) - \sigma'(\theta_{k-1}-y_n)}{\sigma(\theta_k-y_n) - \sigma(\theta_{k-1}-y_n)} \right)^2 \\ 
     \end{pmatrix}
 \end{align*}
 $$
 
+### Miscellanious
+
+The gradient of the sigmoid function is:
+$$
+\sigma'(x) = \sigma(x)(1-\sigma(x))
+$$
+and the hessian is:
+$$
+\begin{align*}
+    \sigma''(x) &= \frac{d}{dx}\sigma(x)(1-\sigma(x)) \\
+    &= \sigma'(x)(1-\sigma(x)) - \sigma'(x)\sigma(x)\\
+    &= \sigma(x)(1-\sigma(x))(1-\sigma(x)) -\sigma(x)(1-\sigma(x))\sigma(x) \\ 
+    &= (1-\sigma(x))\left(\sigma(x)-2\sigma(x)^2\right)
+\end{align*}
+$$
+
+
+<!-- 
 
 $$
 \begin{align*}
@@ -158,4 +185,6 @@ P(y=k|\bbeta;\btheta;\tilde\bx)  &= \begin{cases}
 \sigma'(\theta_{1}-\tilde\eta) - 0 & \text{ if } k=1
 \end{cases}
 \end{align*}
-$$
+$$ -->
+
+## Code
