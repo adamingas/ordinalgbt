@@ -64,7 +64,7 @@ jobs:
       run: python -m build --sdist --wheel
       # Finally, we use a pre-defined action to publish
       # our package in place of twine.
-    - name: Publish to TestPyPI
+    - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
     - name: Test install from PyPi
       run: |
