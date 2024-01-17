@@ -21,7 +21,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx_rtd_theme",
 ]
-if os.environ.get('NO_MATHJAX',False):
+if os.environ.get("NO_MATHJAX",False):
     extensions.append( "sphinx.ext.imgmath")
     imgmath_latex_preamble = "\\usepackage{amsmath}"
 else:
