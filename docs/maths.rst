@@ -60,15 +60,8 @@ Naturally, the probability of :math:`z` being any particular label is
 then:
 
 .. math::
-
-
-   \newcommand{\problessthank}{P(z \leq k; y,\Theta  )}
-   % \newcommand{\bbeta}{\mathbf{b}}
-   % \newcommand{\btheta}{\mathbf{\theta}}
-   \begin{align*}
    P(z = k; y,\Theta  ) &=P(z \leq k; y,\Theta) -P(z \leq k-1; y,\Theta  )  \hspace{2mm} \\
    &= F(\theta_k - y) - F(\theta_{k-1} - y)
-   \end{align*}
 
 A function that satisfies all these conditions is the sigmoid function,
 hereafter denoted as :math:`\sigma`. ### Deriving the loss function
@@ -85,13 +78,9 @@ As is usual in machine learning we use the negative log likelihhod as
 our loss:
 
 .. math::
-
-
-   \begin{align*}
    l({\bf y};\Theta) &= -\log L({\bf y},\theta)\\
    &= -\sum_{i=0}^n I(z_i=k)\log(P(z_i = k; y_i,\Theta)) \\
    &= -\sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y_i) - \sigma(\theta_{k-1} - y_i)\right)
-   \end{align*}
 
 Deriving the gradient and hessian
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -107,7 +96,6 @@ We denote the first and second order derivative of the sigmoid as
 The gradient is denoted as:
 
 .. math::
-   \begin{align*}
    \mathcal{G}&=\frac{\partial l({\bf y};\Theta)}{\partial {\bf y}} \\
    &= -\frac{\partial }{\partial {\bf y}} \sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y_i) - \sigma(\theta_{k-1} - y_i)\right)  \\
    &=
@@ -122,14 +110,12 @@ The gradient is denoted as:
    ... \\
    I(z_n = k) \left( \frac{\sigma'(\theta_k-y_n) - \sigma'(\theta_{k-1}-y_n)}{\sigma(\theta_k-y_n) - \sigma(\theta_{k-1}-y_n)} \right)  \\ 
    \end{pmatrix}
-   \end{align*}
 
 The summmation is gone when calculating the derivative for variable
 :math:`y_i` as every element of the summation depends only on one latent
 variable: 
 
 .. math::
-   \begin{align*}
    \frac{\partial f(y_1)+f(y_2)+f(y_3)}{\partial {\bf y}} &=
    \begin{pmatrix}
    \frac{\partial f(y_1)+f(y_2)+f(y_3)}{\partial y_1} \\
@@ -142,7 +128,6 @@ variable:
    \frac{\partial f(y_2)}{\partial y_2} \\
    \frac{\partial f(y_3)}{\partial y_3} \\
    \end{pmatrix}
-   \end{align*}
 
 The hessian is the partial derivative of the gradient with respect to
 the latent variable vector. This means that for each element of the
@@ -174,7 +159,6 @@ The hessian is then reduced to a vetor:
 .. math::
 
 
-   \begin{align*}
    \mathcal{H} &=  
        \begin{pmatrix}
            \frac{\partial}{\partial y_1 y_1}  \\
@@ -196,7 +180,6 @@ The hessian is then reduced to a vetor:
            -I(z_n = k) \left( \frac{\sigma''(\theta_k-y_n) - \sigma''(\theta_{k-1}-y_n)}{\sigma(\theta_k-y_n) - \sigma(\theta_{k-1}-y_n)} \right)  +
              I(z_n = k)\left( \frac{\sigma'(\theta_k-y_n) - \sigma'(\theta_{k-1}-y_n)}{\sigma(\theta_k-y_n) - \sigma(\theta_{k-1}-y_n)} \right)^2 \\ 
        \end{pmatrix}
-   \end{align*}
 
 Miscellanious
 ~~~~~~~~~~~~~
@@ -213,12 +196,10 @@ and the hessian is:
 .. math::
 
 
-   \begin{align*}
        \sigma''(x) &= \frac{d}{dx}\sigma(x)(1-\sigma(x)) \\
        &= \sigma'(x)(1-\sigma(x)) - \sigma'(x)\sigma(x)\\
        &= \sigma(x)(1-\sigma(x))(1-\sigma(x)) -\sigma(x)(1-\sigma(x))\sigma(x) \\ 
        &= (1-\sigma(x))\left(\sigma(x)-2\sigma(x)^2\right)
-   \end{align*}
 
 .. raw:: html
 
