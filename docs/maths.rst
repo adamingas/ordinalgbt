@@ -27,8 +27,8 @@ In a three ordered labeled problem, we only need two thresholds,
 are associated to each label
 :math:`(-\infty,\theta_1], (\theta_1, \theta_2], (\theta_2, \infty)`.
 
-Deriving probabilities
-~~~~~~~~~~~~~~~~~~~~~~
+Deriving the probabilities
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A property we want our mapping from latent variable to probability to
 have is for the cummulative probability of label :math:`z` being at most
@@ -93,7 +93,8 @@ our loss:
    &= -\sum_{i=0}^n I(z_i=k)\log \left(\sigma(\theta_k - y_i) - \sigma(\theta_{k-1} - y_i)\right)
    \end{align*}
 
-### Deriving the gradient and hessian
+Deriving the gradient and hessian
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To use a custom loss function with gradient boosting tree frameworks
 (i.e. lightgbm), we have to first derive the gradient and hessian of the
