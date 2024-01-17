@@ -30,7 +30,15 @@ else:
 autoapi_dirs = ["../ordinalgbt"]  # location to parse for API reference
 html_theme = "sphinx_rtd_theme"
 exclude_patterns = []
-nb_execution_mode = "off"
+myst_enable_extensions = [
+    "amsmath",
+    "colon_fence",
+    "deflist",
+    "dollarmath",
+    "html_image",
+]
+
+nb_execution_mode = "cache"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
