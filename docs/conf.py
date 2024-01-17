@@ -5,6 +5,7 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+import os
 
 project = "OrdinalGBT"
 copyright = "2023, Adamos Spanashis"
@@ -19,14 +20,17 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx_rtd_theme",
-    "sphinx.ext.mathjax"
 ]
+if os.environ.get("NO_MATHJAX",False):
+    extensions.append( "sphinx.ext.imgmath")
+    imgmath_latex_preamble = "\\usepackage{amsmath}"
+else:
+    extensions.append( "sphinx.ext.mathjax")
+    mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 autoapi_dirs = ["../ordinalgbt"]  # location to parse for API reference
 html_theme = "sphinx_rtd_theme"
 exclude_patterns = []
 nb_execution_mode = "off"
-mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
