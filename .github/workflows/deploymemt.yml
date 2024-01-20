@@ -1,0 +1,51 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python application
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: ['main']
+  workflow_run:
+    workflows: ['ci']
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  cd:
+    # Only run this job if new work is pushed to "main"
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Set up operating system
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment:
+      name: pypi
+      url: https://pypi.org/p/ordinalgbt
+    # Define job steps
+    steps:
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+          python -m pip install --upgrade pip
+          pip install build
+    - uses: actions/checkout@v3
+      # Here we run build to create a wheel and a
+      # .tar.gz source distribution.
+    - name: Build package
+      run: python -m build --sdist --wheel
+      # Finally, we use a pre-defined action to publish
+      # our package in place of twine.
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+    - name: Test install from PyPi
+      run: |
+        pip install ordinalgbt

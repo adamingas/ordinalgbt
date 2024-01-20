@@ -57,3 +57,12 @@ y_proba = model.predict_proba(X_new)
 
 print(y_proba)
 ```
+
+## TODOs
+* Create XGBoost and Catboost implementations
+* Bring test coverage to 100%
+* Implement the all-thresholds loss function
+* Implement the ordistic loss function
+* Create more stable sigmoid calculation
+* Experiment with bounded and unbounded optimisation for the thresholds
+* Identify way to reduce jumps due to large gradient
