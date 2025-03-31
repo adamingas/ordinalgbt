@@ -35,8 +35,6 @@ jobs:
         pip install  pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - uses: chartboost/ruff-action@v1
-      with:
-        args: --extend-exclude '\.ipynb$'
     - name: Test with pytest
       run: |
         pytest

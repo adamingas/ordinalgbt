@@ -10,6 +10,9 @@ unfixable = []
 # restrict Line length to 99
 line-length = 88
 
+# Exclude Jupyter notebooks from linting
+extend-exclude = ["\\.ipynb$"]
+
 [build-system]
 requires = ["setuptools >= 61"]
 build-backend = "setuptools.build_meta"
