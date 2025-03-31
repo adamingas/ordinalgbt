@@ -9,6 +9,49 @@ unfixable = []
 
 # restrict Line length to 99
 line-length = 88
+
+# Exclude Jupyter notebooks from linting
+exclude = ["*.ipynb"]
+
 [build-system]
 requires = ["setuptools >= 61"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "ordinalgbt"
+version = "0.1.2"
+description = "A library to build Gradient boosted trees for ordinal labels"
+readme = {file = "README.md", content-type = "text/markdown"}
+authors = [
+    {name = "Adamos Spanashis", email = "spanashis@gmail.com"}
+]
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "lightgbm<4",
+    "numpy",
+    "scipy",
+    "scikit-learn",
+]
+
+[project.urls]
+Homepage = "https://github.com/adamingas/ordinalgbt"
+
+[project.optional-dependencies]
+tests = [
+    "pytest",
+    "pytest-cov",
+]
+dev = [
+    "scikit-learn",
+    "lightgbm<4.0.0",
+    "pytest",
+    "pytest-cov",
+    "shap",
+    "myst_nb",
+    "sphinx>7.2",
+    "sphinx-autoapi",
+    "sphinx-rtd-theme",
+]
