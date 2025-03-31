@@ -11,7 +11,7 @@ unfixable = []
 line-length = 88
 
 # Exclude Jupyter notebooks from linting
-extend-exclude = ["\\.ipynb$"]
+exclude = ["*.ipynb"]
 
 [build-system]
 requires = ["setuptools >= 61"]
